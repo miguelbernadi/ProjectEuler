@@ -1,4 +1,6 @@
-CPP := g++ -Wall -o
+CPP := g++ -Wall -pedantic -o
+
+.PHONY: clean
 
 all: problems tools
 
@@ -30,3 +32,6 @@ integers:
 	$(CPP) $@.exe $@.cpp
 011:
 	$(CPP) $@.exe $@.cpp
+
+clean:
+	rm -r *.exe
