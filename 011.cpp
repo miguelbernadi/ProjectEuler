@@ -31,14 +31,15 @@ What is the greatest product of four adjacent numbers in any direction (up, down
 #include <fstream>
 #include <vector>
 #include <algorithm>
+#include <string>
 
 std::vector<int> products;
 
-void populate_matrix(Matrix<int> mat)
+void populate_matrix(Matrix<int>* mat)
 {
     int i;
-    char* inname = "011.dat";
-    std::ifstream infile(inname);
+    std::string inname = "data/011.dat";
+    std::ifstream infile(inname.c_str());
 
     if (!infile) {
         std::cout << "There was a problem opening file "
@@ -47,99 +48,92 @@ void populate_matrix(Matrix<int> mat)
              << std::endl;
     }
     std::cout << "Opened " << inname << " for reading." << std::endl;
+    unsigned int row = 0, col = 0;
     while (infile >> i) 
     {
-        for(unsigned int ii = 0; ii < mat.rows(); ++ii)
-        {
-            for(unsigned int iii = 0; iii < mat.cols(); ++iii)
-            {
-                mat.insert(ii, iii, i);
-            }
+        mat->insert(row, col, i);
+        ++col;
+        if(col == mat->cols() )
+        { 
+           ++row;
+           col = 0;
         }
     }
 }
 
-void rows(Matrix<int> mat)
+void rows(Matrix<int>* mat)
 {
-    for(unsigned int i = 0; i < mat.rows(); ++i)
+    for(unsigned int i = 0; i < mat->rows(); ++i)
     {
-       for(unsigned int ii = 0; ii < mat.cols() - 4; ++ii)
+       for(unsigned int ii = 0; ii < mat->cols() - 4; ++ii)
        {
-          products.push_back( mat(i, ii) * mat(i, ii + 1) * mat(i, ii + 2) * mat(i, ii + 3) );
+          products.push_back( mat->at(i, ii) * mat->at(i, ii + 1) * mat->at(i, ii + 2) * mat->at(i, ii + 3) );
        }
     }
 }
 
-void cols(Matrix<int> mat)
+void cols(Matrix<int>* mat)
 {
-    for(unsigned int i = 0; i < mat.cols(); ++i)
+    for(unsigned int i = 0; i < mat->cols(); ++i)
     {
-       for(unsigned int ii = 0; ii < mat.rows() - 4; ++ii)
+       for(unsigned int ii = 0; ii < mat->rows() - 4; ++ii)
        {
-          products.push_back( mat(ii, i) * mat(ii + 1, i) * mat(ii + 2, i) * mat(ii + 3, i) );
+          products.push_back( mat->at(ii, i) * mat->at(ii + 1, i) * mat->at(ii + 2, i) * mat->at(ii + 3, i) );
        }
     }
 }
 
-void diag_asc(Matrix<int> mat)
+void diag_asc(Matrix<int>* mat)
 {
-    for(unsigned int i = 3; i < mat.rows(); ++i)
+    for(unsigned int i = 3; i < mat->rows(); ++i)
     {
-        for(unsigned int ii = 0; ii <= i - 3; ++ii)
+        for(unsigned int ii = 0; ii < i - 2; ++ii)
         {
-            products.push_back( mat(i, ii) * mat(i - 1, ii + 1) * mat(i - 2, ii + 2) * mat( i - 3, ii + 3) );
+            products.push_back( mat->at(i, ii) * mat->at(i - 1, ii + 1) * mat->at(i - 2, ii + 2) * mat->at( i - 3, ii + 3) );
         }
     }
-
-    std::cout << "Done first diag_asc" << std::endl;
-
-    for(unsigned int i = 0; i < mat.cols() - 4; ++i)
+    for(unsigned int i = 0; i < mat->cols() - 3; ++i)
     {
-        for(unsigned int ii = mat.rows() - 1; ii >= i - 22; --ii)
+        for(unsigned int ii = mat->rows() - 1; ii > i + 2; --ii)
         {
-            products.push_back( mat(ii, i) * mat(ii - 1, i + 1) * mat(ii - 2, i + 2) * mat(ii - 3, i + 3) );
+            products.push_back( mat->at(ii, i) * mat->at(ii - 1, i + 1) * mat->at(ii - 2, i + 2) * mat->at(ii - 3, i + 3) );
         }
+   
     }
- 
+
 }
 
-void diag_desc(Matrix<int> mat)
+void diag_desc(Matrix<int>* mat)
 {
-    for(unsigned int i = mat.rows() - 4; i >= 0; --i)
+    for(unsigned int i = mat->rows() - 4; i > 0; --i)
     {
-        for(unsigned int ii = 0; ii <= mat.cols() - i; ++ii)
+        for(unsigned int ii = 0; ii < mat->cols() - 2 - i; ++ii)
         {
-            products.push_back( mat(i, ii) * mat(i + 1, ii + 1) * mat(i + 2, ii + 2) * mat(i + 3, ii + 3) );
+            products.push_back( mat->at(i, ii) * mat->at(i + 1, ii + 1) * mat->at(i + 2, ii + 2) * mat->at(i + 3, ii + 3) );
         }
     }
-
-    std::cout << "Done first diag_desc" << std::endl;
-    for(unsigned int i = 0; i < mat.cols() - 4; ++i)
+    for(unsigned int i = 0; i < mat->cols() - 4; ++i)
     {
-        for(unsigned int ii = 0; ii < mat.rows() - 4 - i; ++ii)
+        for(unsigned int ii = 0; ii < mat->rows() - 4 - i; ++ii)
         {
-            products.push_back( mat(ii, i) * mat(ii + 1, i + 1) * mat(ii + 2, i + 2) * mat(ii + 3, i + 3) );
+            products.push_back( mat->at(ii, i) * mat->at(ii + 1, i + 1) * mat->at(ii + 2, i + 2) * mat->at(ii + 3, i + 3) );
         }
     }
 }
-
 
 int main()
 {
     try
     {
-    Matrix<int>* mat = new Matrix<int>(20, 20);
-    populate_matrix(*mat);
-    rows(*mat);
-    std::cout << "Done rows" << std::endl;
-    cols(*mat);
-    std::cout << "Done cols" << std::endl;
-    diag_asc(*mat);
-    std::cout << "Done diag_asc" << std::endl;
-    diag_desc(*mat);
-    std::cout << "Done diag_desc" << std::endl;
 
-    std::cout << *std::max_element( products.begin(), products.end() );
+    Matrix<int>* mat = new Matrix<int>(20, 20);
+    populate_matrix(mat);
+    rows(mat);
+    cols(mat);
+    diag_asc(mat);
+    diag_desc(mat);
+
+    std::cout << *std::max_element( products.begin(), products.end() ) << std::endl;
 
     }
     catch(std::exception& e)

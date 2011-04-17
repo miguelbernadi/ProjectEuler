@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <vector>
 #include <string>
+#include <sstream>
 
 template < typename _T >
 class Matrix
@@ -48,7 +49,9 @@ unsigned int Matrix< _T >::_calcPos(unsigned int& row, unsigned int& col) const
 {
     if(row > rows_ - 1 || col > cols_ - 1 )
     {
-         throw std::out_of_range("Exceeded Matrix limits");
+         std::ostringstream oss;
+         oss << "Exceeded Matrix limits at (" << row << ", " << col << "). Real limits (" << rows_ - 1 << ", " << cols_ - 1 << ")"; 
+         throw std::out_of_range( oss.str() );
     }
     return row * cols_ + col;
 }
@@ -56,7 +59,7 @@ unsigned int Matrix< _T >::_calcPos(unsigned int& row, unsigned int& col) const
 template < typename _T >
 void Matrix< _T >::insert(unsigned int row, unsigned int col, _T value)
 {
-    internals.at( _calcPos(row, col) ) = value;
+    internals[ _calcPos(row, col) ] = value;
 }
 
 template < typename _T >
