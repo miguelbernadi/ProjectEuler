@@ -34,6 +34,12 @@ matrixtest:
 	$(CPP) $@.exe $@.cpp
 011:
 	$(CPP) $@.exe $@.cpp
+012:
+	$(CPP) $@.exe $@.cpp
+013:
+	$(CPP) $@.exe $@.cpp
+014:
+	$(CPP) $@.exe $@.cpp
 
 clean:
 	rm -r *.exe
