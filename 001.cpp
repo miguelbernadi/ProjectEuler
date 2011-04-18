@@ -5,14 +5,13 @@ Find the sum of all the multiples of 3 or 5 below 1000.
 */
 
 #include <iostream>
+#include <vector>
+#include <algorithm>
 
-unsigned long int table[500] = { 0 };
+std::vector<int> table;
+unsigned int total = 0;
 
-bool check(unsigned long int i, unsigned long int j);
-bool check3(unsigned long int i);
-bool check5(unsigned long int i);
-
-bool check(unsigned long int i, unsigned long int j)
+bool check(unsigned int i, unsigned int j)
 {
    if(i % j == 0)
    {
@@ -21,42 +20,22 @@ bool check(unsigned long int i, unsigned long int j)
    return false;
 }
 
-bool check3(unsigned long int i)
+void totals(unsigned int i)
 {
-   return check(i,3);
-}
-
-bool check5(unsigned long int i)
-{
-   return check(i,5);
+    total += i;
 }
 
 int main()
 {
-   unsigned int index = 0;
-   for (unsigned long int i = 1; i < 1000; i++)
+   for (unsigned int i = 1; i < 1000; i++)
    {
-      if( check3(i) )
+      if( check(i, 3) || check(i, 5) )
       {
-         table[index] = i;
-         index++;
+         table.push_back(i);
       }
-      else
-      {
-         if( check5(i) )
-         {
-            table[index] = i;
-            index++;
-         }
-     }
    }
-   unsigned long int total = 0;
-   for(unsigned int i = 0; i < index; i++)
-   {
-      std::cout << table[i] << std::endl;
-      total += table[i];
-      std::cout << "current total " << total << std::endl;
-   }
+   std::for_each(table.begin(), table.end(), totals);
    std::cout << total << std::endl;
    return 0;
 }
+
