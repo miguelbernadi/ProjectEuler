@@ -1,6 +1,15 @@
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <stdexcept>
+
+/* Complete later.
+class FileException : public runtime_error
+{
+  public:
+    FileException(std::string str) { }
+};
+*/
 
 // Add path parsing abilities to distinguish /home/usr/ and foo.txt,
 // recreate paths and abstract from platform dependent paths.
@@ -28,6 +37,7 @@ class File
   public:
     File();
     File(std::string& filename) : filed( new FileDescriptor(filename) ) { } 
+    ~File() { delete filed; delete fstream; }
     std::string getFilename() const { this->filed->filePath(); }
     void setFilename(std::string& filename);
     bool _fileExists();
@@ -41,7 +51,10 @@ bool File::_fileExists()
     this->fstream = new std::ifstream( this->filed->filePath().c_str() );
     if( !fstream )
     {
-//        throw 
+        std::ostringstream oss;
+        oss << "Failed to open file " << this->filed->filePath();
+        throw std::runtime_error( oss.str() );
+// check        throw std::runtime_error( "Failed to open file " + this->filed->filePath() );
         return false;
     }
     else
